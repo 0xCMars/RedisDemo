@@ -1,17 +1,17 @@
 # !/usr/bin/env python
 # -*- coding: UTF-8 -*-
-'''
-@Porject : RedisDemo
+"""
+@Project : RedisDemo
 @File : RedisManager.py
 @Author : MarsChen
-@Date : 28/11/25 
-'''
+@Date : 28/11/25
+"""
+import json
+import logging
+from typing import Any, Optional
+
 import redis
 from redis.exceptions import RedisError
-import json
-import time
-import logging
-from typing import Callable, Any, Optional
 
 # GLOBAL
 REDIS_HOST = 'localhost'
@@ -24,11 +24,13 @@ CACHE_KEY_PREFIX = "app_cache:"
 
 logger = logging.getLogger(__name__)
 
+
 class RedisManager(object):
     """
     A generic Redis Cache Manager class, encapsulating all caching operations.
     """
-    def __init__(self, host: str=REDIS_HOST, port: int=REDIS_PORT, cache_key_prefix: str=CACHE_KEY_PREFIX):
+
+    def __init__(self, host: str = REDIS_HOST, port: int = REDIS_PORT, cache_key_prefix: str = CACHE_KEY_PREFIX):
         self._redis: Optional[redis.Redis] = None
         self._cache_key_prefix = cache_key_prefix
         try:
@@ -65,10 +67,10 @@ class RedisManager(object):
             # Key does not exist in Redis
             return None
         except RedisError as e:
-            logger.error("Redis READ Error for key {key}: {e}. Returning None.")
+            logger.error(f"Redis READ Error for key {key}: {e}. Returning None.")
             return None
         except json.JSONDecodeError as e:
-            logger.error("Cache Data Corrupted for key {key}: {e}. Deleting and return None")
+            logger.error(f"Cache Data Corrupted for key {key}: {e}. Deleting and return None")
             self.delete(key)
             return None
 
@@ -90,7 +92,7 @@ class RedisManager(object):
             data_to_cache = json.dumps(data)
 
             # Use SETEX for atomic setting of value and expiration time
-            self._redis_client.setex(
+            self._redis.setex(
                 name=full_key,
                 value=data_to_cache,
                 time=expire_seconds
@@ -113,7 +115,7 @@ class RedisManager(object):
         if self._redis:
             full_key = self._get_full_key(key)
             try:
-                self._redis_client.delete(full_key)
+                self._redis.delete(full_key)
                 logger.info(f"Cache key {key} successfully DELETED.")
             except redis.exceptions.RedisError as e:
                 logger.error(f"Redis DELETE Error for key {key}: {e}.")

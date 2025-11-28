@@ -1,10 +1,13 @@
+import time
+from typing import List
+
 from src.RedisManager import RedisManager, REDIS_HOST, REDIS_PORT
 
-
-REDIS_MANAGER = RedisManager(
+CACHE_MANAGER = RedisManager(
     host=REDIS_HOST,
     port=REDIS_PORT
 )
+
 
 # Simulated original expensive calculation function
 def expensive_db_calculation(user_id: int) -> List[dict]:
@@ -54,6 +57,7 @@ def get_product_with_cache(user_id: int) -> dict:
 
     return product_data
 
+
 def main():
     user_id = 1111
 
@@ -73,7 +77,7 @@ def main():
     # 演示主动失效
     print("\n--- Demo: Active Cache Invalidation ---")
     CACHE_MANAGER.delete(f"account_value:{user_id}")
-    get_account_value_with_cache(user_id)  # 强制 MISS and SET
+    get_product_with_cache(user_id)  # 强制 MISS and SET
 
 
 if __name__ == "__main__":
