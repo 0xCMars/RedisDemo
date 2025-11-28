@@ -10,6 +10,7 @@ import redis
 from redis.exceptions import RedisError
 import json
 import time
+import logging
 from typing import Callable, Any, Optional
 
 # GLOBAL
