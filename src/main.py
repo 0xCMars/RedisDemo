@@ -27,14 +27,14 @@ def expensive_db_calculation(user_id: int) -> List[dict]:
     ]
 
 
-def get_product_with_cache(user_id: int) -> dict:
+def get_product_with_cache(user_id: int) -> List[dict]:
     """
     Application logic implementing the Cache-Aside pattern.
     """
     cache_key = f"account_value:{user_id}"
     EXPIRATION = 120  # 2 minutes
 
-    # 1. Try to READ from cache
+    # 1. Try to READ from the cache
     product_data = CACHE_MANAGER.get(cache_key)
 
     if product_data is not None:
@@ -71,7 +71,7 @@ def main():
     result = get_product_with_cache(user_id)
     end_time = time.time()
 
-    print(f"Final Account Value: {result['total_value']}")
+    print(f"Final Account Value: {result[0]['total']}")
     print(f"Cache HIT retrieval time: {end_time - start_time:.4f} seconds.")
 
     # 演示主动失效
